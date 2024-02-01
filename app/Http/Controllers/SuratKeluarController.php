@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Perihal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SuratKeluar;
@@ -16,8 +17,9 @@ class SuratKeluarController extends Controller
     public function show() {
         if (Auth::user()->role === "superadmin" || Auth::user()->role === "admin") {
             $data['unitkerja'] = UnitKerja::all();
-            $data['suratkeluar'] = SuratKeluar::with('unitkerja')->get();
-            $data['suratkeluar'] = $data['suratkeluar']->sortByDesc(function ($surat) {
+            $data['perihal'] = Perihal::all();
+            $data['suratkeluar1'] = SuratKeluar::with('unitkerja')->with('perihal')->orderBy('id','desc')->get();
+            $data['suratkeluar'] = $data['suratkeluar1']->sortByDesc(function ($surat) {
                 switch ($surat->sifat_surat) {
                     case 'segera':
                         return 1;
@@ -29,10 +31,30 @@ class SuratKeluarController extends Controller
                         return 4;
                 }
             })->sortByDesc('created_at');
+
+            $romawi = ['I','II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+            $data['no_surat'] = "421.5-perihal-SMK YPC/".$romawi[date('n') - 1].'/'.date('Y');
+
+            if($data['suratkeluar']->count()>0){
+                $no_surat = $data['suratkeluar1'][0]->nomor_surat;
+                $no_surat = explode("/", $no_surat);
+                if($no_surat[3]==date('Y')){
+                    $no_urut = (int) $no_surat[0] + 1;
+                }else{
+                    $no_urut = 1;
+                }
+
+                $no_urut = sprintf('%03s', $no_urut);
+
+                $data['no_surat'] = $no_urut . "/". $data['no_surat'];
+            }else{
+                $data['no_surat'] = "001/421.5-perihal-SMK YPC/".$romawi[date('n') - 1].'/'.date('Y');
+            }
         }else {
             $user = Auth::user()->id_unit_kerja;
+            $data['perihal'] = Perihal::all();
             $data['unitkerja'] = UnitKerja::all();
-            $data['suratkeluar'] = SuratKeluar::where('pengirim', $user)->get();
+            $data['suratkeluar'] = SuratKeluar::with('perihal')->where('pengirim', $user)->get();
             $data['suratkeluar'] = $data['suratkeluar']->sortByDesc(function ($surat) {
                 switch ($surat->sifat) {
                     case 'segera':
@@ -52,12 +74,12 @@ class SuratKeluarController extends Controller
     public function create(Request $req){
         $user = Auth::user()->id;
         $tanggal = Carbon::now('Asia/Jakarta');
-        $this->validate($req,[
+        $req->validate([
+            'perihal_select'=>'required',
             'nomor_surat'=>'required',
             'tanggal_surat'=>'required',
             'sifat_surat'=>'required',
             'pengirim'=>'required',
-            'perihal'=>'required',
             'tujuan'=>'required',
             'alamat'=>'required',
             'isi_surat_ringkas'=>'required',
@@ -70,11 +92,11 @@ class SuratKeluarController extends Controller
         }
         SuratKeluar::create([
             'id_user'=>$user,
+            'id_perihal'=>$req->perihal_select,
             'nomor_surat'=>$req->nomor_surat,
             'tanggal_surat'=>$req->tanggal_surat,
             'sifat_surat'=>$req->sifat_surat,
             'pengirim'=>$req->pengirim,
-            'perihal'=>$req->perihal,
             'tujuan'=>$req->tujuan,
             'alamat'=>$req->alamat,
             'isi_surat_ringkas'=>$req->isi_surat_ringkas,
@@ -95,7 +117,7 @@ class SuratKeluarController extends Controller
             $file = $suratkeluar->file;
         }
         $suratkeluar->update(['file' => $file]);
-    
+
         return redirect('surat-keluar');
     }
 
@@ -107,7 +129,7 @@ class SuratKeluarController extends Controller
             'tanggal_surat'=>'required',
             'sifat_surat'=>'required',
             'pengirim'=>'required',
-            'perihal'=>'required',
+            'id_perihal'=>'required',
             'tujuan'=>'required',
             'alamat'=>'required',
             'isi_surat_ringkas'=>'required',
@@ -118,7 +140,7 @@ class SuratKeluarController extends Controller
             'tanggal_surat'=>$req->tanggal_surat,
             'sifat_surat'=>$req->sifat_surat,
             'pengirim'=>$req->pengirim,
-            'perihal'=>$req->perihal,
+            'id_perihal'=>$req->id_perihal,
             'tujuan'=>$req->tujuan,
             'alamat'=>$req->alamat,
             'isi_surat_ringkas'=>$req->isi_surat_ringkas,
@@ -155,7 +177,7 @@ class SuratKeluarController extends Controller
             $jumlahsuratkeluar = $suratkeluar->count();
 
         }
-        
+
         $pdf = PDF::loadview('pdf_suratkeluar', ['suratkeluar' => $suratkeluar, 'unitkerjaNama' => $unitkerjaNama, 'jumlahsuratkeluar' => $jumlahsuratkeluar])->setPaper('a4', 'landscape');
         return $pdf->stream();
 

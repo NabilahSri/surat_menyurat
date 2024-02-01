@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="header-title">
-                        <h4 class="card-title">Unit Kerja</h4>
+                        <h4 class="card-title">Perihal</h4>
                     </div>
                     <div>
                         <!-- Button trigger modal -->
@@ -20,17 +20,22 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Unit Kerja</h1>
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Perihal</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form class="row g-3 needs-validation" method="POST" action="/unit-kerja/create"
+                                        <form class="row g-3 needs-validation" method="POST" action="/perihal/create"
                                             novalidate>
                                             @csrf
                                             <div class="col-md position-relative">
-                                                <label for="validationTooltip01" class="form-label">Unit Kerja</label>
-                                                <input type="text" class="form-control" name="nama_unit_kerja"
+                                                <label for="validationTooltip01" class="form-label">Kode</label>
+                                                <input type="text" class="form-control" name="kode"
+                                                    id="validationTooltip01" required>
+                                            </div>
+                                            <div class="col-md position-relative">
+                                                <label for="validationTooltip01" class="form-label">Perihal</label>
+                                                <input type="text" class="form-control" name="perihal"
                                                     id="validationTooltip01" required>
                                             </div>
                                             <div class="modal-footer">
@@ -51,19 +56,21 @@
                             <thead>
                                 <tr>
                                     <th style="width: 40px">No</th>
-                                    <th>Unit Kerja</th>
+                                    <th>Kode</th>
+                                    <th>Perihal</th>
                                     <th style="width: 100px;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($unitkerja as $item)
+                                @foreach ($perihal as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->nama_unit_kerja }}</td>
+                                        <td>{{ $item->kode }}</td>
+                                        <td>{{ $item->perihal }}</td>
                                         <td>
                                             <div class="flex align-items-center list-user-action">
                                                 <a class="btn btn-sm btn-icon btn-warning" data-bs-toggle="modal"
-                                                    data-bs-target="#editUnitKerja{{ $item->id }}"
+                                                    data-bs-target="#editPerihal{{ $item->id }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
                                                     data-original-title="Edit" href="#">
                                                     <span class="btn-inner">
@@ -84,31 +91,38 @@
                                                     </span>
                                                 </a>
                                                 <!-- Modal untuk Edit Unit Kerja -->
-                                                <div class="modal fade" id="editUnitKerja{{ $item->id }}"
+                                                <div class="modal fade" id="editPerihal{{ $item->id }}"
                                                     data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                    aria-labelledby="editUnitKerjaLabel{{ $item->id }}"
+                                                    aria-labelledby="editPerihalLabel{{ $item->id }}"
                                                     aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h1 class="modal-title fs-5"
-                                                                    id="editUnitKerjaLabel{{ $item->id }}">Edit Unit
-                                                                    Kerja</h1>
+                                                                    id="editPerihalLabel{{ $item->id }}">Edit Perihal
+                                                                </h1>
                                                                 <button type="button" class="btn-close"
                                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
                                                                 <form class="row g-3 needs-validation" method="POST"
-                                                                    action="/unit-kerja/update/{{ $item->id }}"
+                                                                    action="/perihal/update/{{ $item->id }}"
                                                                     novalidate>
                                                                     @csrf
                                                                     <input type="hidden" name="unit_id" id="editUnitId">
                                                                     <div class="col-md position-relative">
-                                                                        <label for="editNamaUnitKerja"
-                                                                            class="form-label">Unit Kerja</label>
+                                                                        <label for="editKodePerihal"
+                                                                            class="form-label">Kode</label>
                                                                         <input type="text" class="form-control"
-                                                                            name="nama_unit_kerja" id="editNamaUnitKerja"
-                                                                            value="{{ $item->nama_unit_kerja }}" required>
+                                                                            name="kode" id="editKodePerihal"
+                                                                            value="{{ $item->kode }}" required>
+                                                                    </div>
+                                                                    <div class="col-md position-relative">
+                                                                        <label for="editNamaPerihal"
+                                                                            class="form-label">Perihal</label>
+                                                                        <input type="text" class="form-control"
+                                                                            name="perihal" id="editNamaPerihal"
+                                                                            value="{{ $item->perihal }}" required>
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn text-white"
@@ -165,7 +179,7 @@
                                                                     data-bs-dismiss="modal"
                                                                     style="background-color: grey;">Batal</button>
                                                                 <a class="btn text-white"
-                                                                    href="/unit-kerja/delete/{{ $item->id }}"
+                                                                    href="/perihal/delete/{{ $item->id }}"
                                                                     style="background-color: red;">Hapus</a>
                                                             </div>
                                                         </div>

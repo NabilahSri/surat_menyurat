@@ -14,4 +14,8 @@ class SuratKeluar extends Model
     public function unitkerja() {
         return $this->belongsTo(UnitKerja::class, 'pengirim');
     }
+
+     public function perihal() {
+        return $this->belongsTo(Perihal::class, 'id_perihal');
+    }
 }

@@ -17,6 +17,10 @@ class SuratMasuk extends Model
         return $this->belongsTo(UnitKerja::class, 'id_unit_kerja');
     }
 
+     public function perihal() {
+        return $this->belongsTo(Perihal::class, 'id_perihal');
+    }
+
     public function disposisi() {
         return $this->hasMany(Disposisi::class, 'id');
     }

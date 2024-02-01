@@ -21,75 +21,83 @@
                                     data-bs-target="#staticBackdrop">
                                     Tambah
                                 </button>
-                            @endif
-
-                            <!-- Modal Tambah-->
-                            <div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
-                                tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Surat Masuk</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form class="row g-3 needs-validation" method="POST"
-                                                action="/surat-masuk/create" enctype="multipart/form-data" novalidate>
-                                                @csrf
-                                                <div class="col-md-12 position-relative">
-                                                    <label for="validationTooltip01" class="form-label">Nomor Surat</label>
-                                                    <input type="text" class="form-control" name="nomor_surat"
-                                                        id="validationTooltip01" required>
-                                                </div>
-                                                <div class="col-md-6 position-relative">
-                                                    <label for="validationTooltip01" class="form-label">Tanggal
-                                                        Surat</label>
-                                                    <input type="date" class="form-control" name="tanggal_surat"
-                                                        id="validationTooltip01" required>
-                                                </div>
-                                                <div class="col-md-6 position-relative">
-                                                    <label for="validationTooltip04" class="form-label">Sifat Surat</label>
-                                                    <select class="form-select" id="validationTooltip04" name="sifat_surat"
-                                                        required>
-                                                        <option selected disabled value="">...</option>
-                                                        <option value="segera">Segera</option>
-                                                        <option value="penting">Penting</option>
-                                                        <option value="rahasia">Rahasia</option>
-                                                        <option value="biasa">Biasa</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6 position-relative">
-                                                    <label for="validationTooltip01" class="form-label">Pengirim</label>
-                                                    <input type="text" class="form-control" name="pengirim"
-                                                        id="validationTooltip01" required>
-                                                </div>
-                                                <div class="col-md-6 position-relative">
-                                                    <label for="validationTooltip01" class="form-label">Perihal</label>
-                                                    <input type="text" class="form-control" name="perihal"
-                                                        id="validationTooltip01" required>
-                                                </div>
-                                                <div class="col-md-12 position-relative">
-                                                    <label for="validationTooltip01" class="form-label">Isi Surat
-                                                        Ringkas</label>
-                                                    <textarea class="form-control" name="isi_surat_ringkas" id="validationTooltip01" cols="30" rows="2" required></textarea>
-                                                </div>
-                                                <div class="col-md-12 position-relative">
-                                                    <label for="validationTooltip01" class="form-label">File</label>
-                                                    <input type="file" class="form-control" name="file"
-                                                        id="validationTooltip01" />
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                                </div>
-                                            </form>
+                                <!-- Modal Tambah-->
+                                <div class="modal fade " id="staticBackdrop" data-bs-backdrop="static"
+                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Surat Masuk
+                                                </h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form class="row g-3 needs-validation" method="POST"
+                                                    action="/surat-masuk/create" enctype="multipart/form-data" novalidate>
+                                                    @csrf
+                                                    <div class="col-md-6 position-relative">
+                                                        <label for="validationTooltip01" class="form-label">Perihal</label>
+                                                        <select class="form-select" id="perihal_select" name="id_perihal"
+                                                            required>
+                                                            <option selected disabled value="">...</option>
+                                                            @foreach ($perihal as $item)
+                                                                <option value="{{ $item->id }}">
+                                                                    {{ $item->perihal }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 position-relative">
+                                                        <label for="validationTooltip01" class="form-label">Nomor
+                                                            Surat</label>
+                                                        <input type="text" class="form-control" id="nomor_surat"
+                                                            name="nomor_surat" value="" readonly>
+                                                    </div>
+                                                    <div class="col-md-6 position-relative">
+                                                        <label for="validationTooltip01" class="form-label">Tanggal
+                                                            Surat</label>
+                                                        <input type="date" class="form-control" name="tanggal_surat"
+                                                            id="validationTooltip01" required>
+                                                    </div>
+                                                    <div class="col-md-6 position-relative">
+                                                        <label for="validationTooltip04" class="form-label">Sifat
+                                                            Surat</label>
+                                                        <select class="form-select" id="validationTooltip04"
+                                                            name="sifat_surat" required>
+                                                            <option selected disabled value="">...</option>
+                                                            <option value="segera">Segera</option>
+                                                            <option value="penting">Penting</option>
+                                                            <option value="rahasia">Rahasia</option>
+                                                            <option value="biasa">Biasa</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 position-relative">
+                                                        <label for="validationTooltip01" class="form-label">Pengirim</label>
+                                                        <input type="text" class="form-control" name="pengirim"
+                                                            id="validationTooltip01" required>
+                                                    </div>
+                                                    <div class="col-md-6 position-relative">
+                                                        <label for="validationTooltip01" class="form-label">File</label>
+                                                        <input type="file" class="form-control" name="file"
+                                                            id="validationTooltip01" />
+                                                    </div>
+                                                    <div class="col-md-12 position-relative">
+                                                        <label for="validationTooltip01" class="form-label">Isi Surat
+                                                            Ringkas</label>
+                                                        <textarea class="form-control" name="isi_surat_ringkas" id="validationTooltip01" cols="30" rows="2" required></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -103,6 +111,7 @@
                                         <th>Tanggal dan Jam</th>
                                         <th>Nomor Surat</th>
                                         <th>Sifat Surat</th>
+                                        <th>Perihal</th>
                                         <th>Pengirim</th>
                                         <th>Disposisi Saat Ini</th>
                                         <th style="width: 100px;">Aksi</th>
@@ -115,6 +124,7 @@
                                             <td>{{ $item->tanggal }}</td>
                                             <td>{{ $item->nomor_surat }}</td>
                                             <td>{{ $item->sifat_surat }}</td>
+                                            <td>{{ $item->perihal->perihal }}</td>
                                             <td>{{ $item->pengirim }}</td>
 
                                             <td>
@@ -346,7 +356,25 @@
                                                                         action="/surat-masuk/update/{{ $item->id }}"
                                                                         enctype="multipart/form-data" novalidate>
                                                                         @csrf
-                                                                        <div class="col-md-12 position-relative">
+                                                                        <div class="col-md-6 position-relative">
+                                                                            <label for="validationTooltip01"
+                                                                                class="form-label">Perihal</label>
+                                                                            <select class="form-select"
+                                                                                id="validationTooltip04"
+                                                                                value="{{ $item->perihal->perihal }}"
+                                                                                name="id_perihal" required>
+                                                                                <option selected
+                                                                                    value="{{ $item->id_perihal }}">
+                                                                                    {{ $item->perihal->perihal }}
+                                                                                </option>
+                                                                                @foreach ($perihal as $perihals)
+                                                                                    <option value={{ $perihals->id }}>
+                                                                                        {{ $perihals->perihal }}
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-6 position-relative">
                                                                             <label for="validationTooltip01"
                                                                                 class="form-label">Nomor Surat</label>
                                                                             <input type="text" class="form-control"
@@ -378,20 +406,12 @@
                                                                                 <option value="biasa">Biasa</option>
                                                                             </select>
                                                                         </div>
-                                                                        <div class="col-md-6 position-relative">
+                                                                        <div class="col-md-12 position-relative">
                                                                             <label for="validationTooltip01"
                                                                                 class="form-label">Pengirim</label>
                                                                             <input type="text" class="form-control"
                                                                                 name="pengirim"
                                                                                 value="{{ $item->pengirim }}"
-                                                                                id="validationTooltip01" required>
-                                                                        </div>
-                                                                        <div class="col-md-6 position-relative">
-                                                                            <label for="validationTooltip01"
-                                                                                class="form-label">Perihal</label>
-                                                                            <input type="text" class="form-control"
-                                                                                name="perihal"
-                                                                                value="{{ $item->perihal }}"
                                                                                 id="validationTooltip01" required>
                                                                         </div>
                                                                         <div class="col-md-12 position-relative">
@@ -464,6 +484,7 @@
                                         <th>Tanggal dan Jam</th>
                                         <th>Nomor Surat</th>
                                         <th>Sifat Surat</th>
+                                        <th>Perihal</th>
                                         <th>Pengirim</th>
                                         <th>Status</th>
                                         <th style="width: 100px;">Aksi</th>
@@ -476,6 +497,7 @@
                                             <td>{{ $data->tanggal }}</td>
                                             <td>{{ $data->nomor_surat }}</td>
                                             <td>{{ $data->sifat_surat }}</td>
+                                            <td>{{ $data->perihal }}</td>
                                             <td>{{ $data->pengirim }}</td>
                                             <td>{{ $data->status }}</td>
                                             <td>
@@ -646,7 +668,7 @@
                                                     <div class="mt-2">
                                                         <h6 class="mb-1">Perihal</h6>
                                                         <p><a href="#" class="text-body"
-                                                                target="_blank">{{ $item->perihal }}</a></p>
+                                                                target="_blank">{{ $item->perihal->perihal }}</a></p>
                                                     </div>
                                                     <div class="mt-2"
                                                         style="max-width: 400px; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -746,7 +768,7 @@
                                                                 <h6 class="mb-1">Perihal</h6>
                                                                 <p>
                                                                     <a href="#"
-                                                                        class="text-black">{{ $item->perihal }}</a>
+                                                                        class="text-black">{{ $item->perihal->perihal }}</a>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -1218,7 +1240,6 @@
         const disposisikanButtons = document.querySelectorAll('.disposisikanButton');
         const cancelFormButtons = document.querySelectorAll('.cancelFormButton');
         const cancelFormButtonsDisposisikan = document.querySelectorAll('.cancelFormButtonDisposisikan');
-
         // Temukan semua elemen form input berdasarkan kelas
         const formInputs = document.querySelectorAll('.formInput');
         const formInputsDisposisikan = document.querySelectorAll('.formInputDisposisikan');

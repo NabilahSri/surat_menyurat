@@ -19,10 +19,10 @@ return new class extends Migration
             $table->text('isi_disposisi');
             $table->bigInteger('dari_bagian')->unsigned();
             $table->date('tanggal');
-            $table->foreign('id_user')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('id_surat_masuk')->references('id')->on('surat_masuks')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('disposisi')->references('id')->on('unit_kerjas')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('dari_bagian')->references('id')->on('unit_kerjas')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_user')->references('id')->on('users')->onUpdate('no action')->onDelete('no action');
+            $table->foreign('id_surat_masuk')->references('id')->on('surat_masuks')->onUpdate('no action')->onDelete('no action');
+            $table->foreign('disposisi')->references('id')->on('unit_kerjas')->onUpdate('no action')->onDelete('no action');
+            $table->foreign('dari_bagian')->references('id')->on('unit_kerjas')->onUpdate('no action')->onDelete('no action');
             $table->timestamps();
         });
     }

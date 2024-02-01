@@ -9,6 +9,7 @@ use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PerihalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,31 +27,38 @@ use App\Http\Controllers\DashboardController;
     });
     Route::post('/actionlogin', [LoginController::class, 'actionlogin'])->name('actionlogin');
     Route::get('/logout/{id}', [LoginController::class, 'logout']);
-    
+
     Route::group(['middleware'=>['auth']],function(){
         Route::get('/dashboard', [DashboardController::class, 'show']);
     Route::get('/profile', [LoginController::class, 'show']);
     Route::post('/profile/update/{id}', [LoginController::class, 'update']);
-    
+
     Route::controller(LembagaController::class)->group(function (){
         Route::get('/lembaga','show');
         Route::post('/lembaga/update/{id}','update');
     });
-    
+
     Route::controller(UnitKerjaController::class)->group(function (){
         Route::get('/unit-kerja','show');
         Route::post('/unit-kerja/create','create');
         Route::post('/unit-kerja/update/{id}','update');
         Route::get('/unit-kerja/delete/{id}','delete');
     });
-    
+
+    Route::controller(PerihalController::class)->group(function (){
+        Route::get('/perihal','show');
+        Route::post('/perihal/create','create');
+        Route::post('/perihal/update/{id}','update');
+        Route::get('/perihal/delete/{id}','delete');
+    });
+
     Route::controller(UserController::class)->group(function (){
         Route::get('/user','show');
         Route::post('/user/create','create');
         Route::post('/user/update/{id}','update');
         Route::get('/user/delete/{id}','delete');
     });
-    
+
     Route::controller(SuratMasukController::class)->group(function (){
         Route::get('/surat-masuk','show');
         Route::post('/surat-masuk/create','create');
@@ -62,7 +70,7 @@ use App\Http\Controllers\DashboardController;
         Route::post('/surat-masuk/file/update/{id}','update_file');
         Route::get('/surat-masuk/cetak_pdf','cetak_pdf_sm');
     });
-    
+
     Route::controller(SuratKeluarController::class)->group(function (){
         Route::get('/surat-keluar','show');
         Route::post('/surat-keluar/create','create');
@@ -70,9 +78,9 @@ use App\Http\Controllers\DashboardController;
         Route::get('/surat-keluar/delete/{id}','delete');
         Route::post('/surat-keluar/file/update/{id}','update_file');
         Route::get('/surat-keluar/cetak_pdf','cetak_pdf_sk');
-    
+
     });
-    
+
     Route::controller(ReportController::class)->group(function (){
         Route::get('/report-sm','showSm');
         Route::get('/report-sm/action','reportsm');

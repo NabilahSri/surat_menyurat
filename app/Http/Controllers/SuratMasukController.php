@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\SuratMasuk;
 use App\Models\UnitKerja;
 use App\Models\Disposisi;
+use App\Models\Perihal;
+use Barryvdh\DomPDF\PDF as DomPDFPDF;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -17,10 +19,12 @@ class SuratMasukController extends Controller
     public function show() {
         if (Auth::user()->role === "superadmin" || Auth::user()->role === "admin") {
             $data['unitkerja'] = UnitKerja::all();
-            $data['suratmasuk'] = SuratMasuk::with('unitkerja')
+            $data['perihal'] = Perihal::all();
+            $data['suratmasuk1'] = SuratMasuk::with('unitkerja')
+            ->with('perihal')
             ->orderBy('created_at', 'desc')
             ->get();
-            $data['suratmasuk'] = $data['suratmasuk']->sortBy(function ($surat) {
+            $data['suratmasuk'] = $data['suratmasuk1']->sortBy(function ($surat) {
                 switch ($surat->sifat_surat) {
                     case 'segera':
                         return 1;
@@ -36,19 +40,24 @@ class SuratMasukController extends Controller
             ->join('surat_masuks', 'disposisis.id_surat_masuk', '=', 'surat_masuks.id')
             ->join('unit_kerjas', 'disposisis.disposisi', '=', 'unit_kerjas.id')
             // ->groupBy('surat_masuks.id','surat_masuks.id_user')
+            ->orderBy('surat_masuks.id','desc')
             ->get();
+
             $data['disposisi'] = Disposisi::with('unitkerja', 'unitkerja2')->get();
             $user = Auth::user();
             $data['dari_bagian'] = $user::with('unitkerja')->first();
         }else {
             $user = Auth::user()->id_unit_kerja;
-
-            $data['suratmasuk'] = Disposisi::select('surat_masuks.*', 'unit_kerjas.*', 'surat_masuks.id as IdSuratMasuk')
-                ->join('surat_masuks', 'disposisis.id_surat_masuk', '=', 'surat_masuks.id')
-                ->join('unit_kerjas', 'disposisis.disposisi', '=', 'unit_kerjas.id')
-                ->where('disposisis.disposisi', $user)
-                ->orderBy('surat_masuks.created_at', 'desc')
-                ->get();
+            $data['unitkerja'] = UnitKerja::all();
+            $data['suratmasuk'] = SuratMasuk::select('surat_masuks.*', 'perihal.*', 'surat_masuks.id as IdSuratMasuk')
+            ->join('perihal', 'surat_masuks.id_perihal', '=', 'perihal.id')
+            ->whereIn('surat_masuks.id', function($query) use ($user) {
+                $query->select('disposisis.id_surat_masuk')
+                    ->from('disposisis')
+                    ->where('disposisis.disposisi', $user);
+            })
+            ->orderBy('surat_masuks.created_at', 'desc')
+            ->get();
 
                 $data['suratmasuk'] = $data['suratmasuk']->sortBy(function($surat) {
                     switch ($surat->sifat_surat) {
@@ -78,7 +87,7 @@ class SuratMasukController extends Controller
             'tanggal_surat'=>'required',
             'sifat_surat'=>'required',
             'pengirim'=>'required',
-            'perihal'=>'required',
+            'id_perihal'=>'required',
             'isi_surat_ringkas'=>'required',
         ]);
         $file = $req->file('file');
@@ -94,7 +103,7 @@ class SuratMasukController extends Controller
             'tanggal_surat'=>$req->tanggal_surat,
             'sifat_surat'=>$req->sifat_surat,
             'pengirim'=>$req->pengirim,
-            'perihal'=>$req->perihal,
+            'id_perihal'=>$req->id_perihal,
             'isi_surat_ringkas'=>$req->isi_surat_ringkas,
             'tanggal'=>$tanggal,
             'status'=>'Open',
@@ -111,7 +120,7 @@ class SuratMasukController extends Controller
             'tanggal_surat'=>'required',
             'sifat_surat'=>'required',
             'pengirim'=>'required',
-            'perihal'=>'required',
+            'id_perihal'=>'required',
             'isi_surat_ringkas'=>'required',
         ]);
         SuratMasuk::where('id',$req->id)->update([
@@ -120,7 +129,7 @@ class SuratMasukController extends Controller
             'tanggal_surat'=>$req->tanggal_surat,
             'sifat_surat'=>$req->sifat_surat,
             'pengirim'=>$req->pengirim,
-            'perihal'=>$req->perihal,
+            'id_perihal'=>$req->id_perihal,
             'isi_surat_ringkas'=>$req->isi_surat_ringkas,
             'tanggal'=>$tanggal,
         ]);
@@ -173,9 +182,9 @@ class SuratMasukController extends Controller
             $file = $suratmasuk->file;
         }
         $suratmasuk->update(['file' => $file]);
-    
+
         return redirect('surat-masuk');
-    } 
+    }
 
     public function cetak_pdf_sm(Request $request) {
         if (Auth::user()->role === "superadmin" || Auth::user()->role == "admin") {
@@ -204,7 +213,7 @@ class SuratMasukController extends Controller
         }
 
         $jumlahsuratmasuk = $suratmasuk->count();
-        
+
         $pdf = PDF::loadview('pdf_suratmasuk', ['suratmasuk' => $suratmasuk, 'jumlahsuratmasuk' => $jumlahsuratmasuk])->setPaper('a4', 'landscape');
         return $pdf->stream();
     }

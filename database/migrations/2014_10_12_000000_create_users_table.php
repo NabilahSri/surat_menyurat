@@ -22,7 +22,7 @@ return new class extends Migration
             $table->bigInteger('id_unit_kerja')->unsigned()->nullable();
             $table->enum('role', ['admin', 'superadmin', 'operator']);
             $table->text('foto')->nullable();
-            $table->foreign('id_unit_kerja')->references('id')->on('unit_kerjas')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_unit_kerja')->references('id')->on('unit_kerjas')->onUpdate('no action')->onDelete('no action');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -18,13 +18,14 @@ return new class extends Migration
             $table->date('tanggal_surat');
             $table->enum('sifat_surat', ['segera', 'penting', 'rahasia', 'biasa']);
             $table->string('pengirim');
-            $table->string('perihal');
+            $table->unsignedBigInteger('id_perihal');
             $table->text('isi_surat_ringkas');
             $table->text('file')->nullable();
             $table->datetime('tanggal');
             $table->string('status');
             $table->string('lokasi_penyimpanan')->nullable();
-            $table->foreign('id_user')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_user')->references('id')->on('users')->onUpdate('no action')->onDelete('no action');
+            $table->foreign('id_perihal')->references('id')->on('perihal')->onUpdate('no action')->onDelete('no action');
             $table->timestamps();
         });
     }

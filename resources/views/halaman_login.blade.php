@@ -85,7 +85,8 @@
                                                     <div class="form-group">
                                                         <label for="username" class="form-label">Username</label>
                                                         <input type="text" class="form-control" id="username"
-                                                            name="username" aria-describedby="username" placeholder=" ">
+                                                            name="username" aria-describedby="username" placeholder=" "
+                                                            autofocus>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12">

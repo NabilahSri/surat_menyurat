@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Perihal;
 use Illuminate\Http\Request;
 use App\Models\UnitKerja;
 use App\Models\SuratMasuk;
@@ -13,7 +14,7 @@ class ReportController extends Controller
 {
     public function showSm(Request $request) {
         $data['unitkerja'] = UnitKerja::all();
-
+        $data['perihal'] = Perihal::all();
         return view('reportsm', $data);
     }
 
@@ -22,6 +23,7 @@ class ReportController extends Controller
         $tanggalAwal = $request->input('tanggal_awal');
         $tanggalAkhir = $request->input('tanggal_akhir');
         $unitKerjaId = $request->input('id_unit_kerja');
+        $perihal = $request->input('perihal');
 
         $query = SuratMasuk::query();
 
@@ -41,6 +43,10 @@ class ReportController extends Controller
             ->where('disposisis.disposisi', $unitKerjaId);
         }
 
+        if (!empty($perihal)) {
+            $query->select('surat_masuks.*')->where('id_perihal', $perihal);
+        }
+
         // Ambil data surat masuk sesuai filter
         $suratMasuk = $query->get();
 
@@ -48,6 +54,7 @@ class ReportController extends Controller
             'tanggal_awal' => $tanggalAwal,
             'tanggal_akhir' => $tanggalAkhir,
             'id_unit_kerja' => $unitKerjaId,
+            'perihal' => $perihal,
         ]);
 
         return view('reportsm_tabel', compact('suratMasuk'));
@@ -58,6 +65,7 @@ class ReportController extends Controller
         $tanggalAwal = $filterCriteria['tanggal_awal'];
         $tanggalAkhir = $filterCriteria['tanggal_akhir'];
         $unitKerjaId = $filterCriteria['id_unit_kerja'];
+        $perihal = $filterCriteria['perihal'];
 
         $query = DB::table('surat_masuks')
         ->leftJoin('disposisis', 'surat_masuks.id', '=', 'disposisis.id_surat_masuk')
@@ -79,9 +87,13 @@ class ReportController extends Controller
             ->where('disposisis.disposisi', $unitKerjaId);
         }
 
+        if (!empty($perihal)) {
+            $query->select('surat_masuks.id_perihal')->where('id_perihal', $perihal);
+        }
+
         // Ambil data surat masuk sesuai filter
         $suratmasuk = $query->get();
-        
+
         $jumlahsuratmasuk = $suratmasuk->count();
         $pdf = PDF::loadview('suratmasuk_pdf', ['suratmasuk' => $suratmasuk, 'jumlahsuratmasuk' => $jumlahsuratmasuk, 'tgl_awal' => $tanggalAwal, 'tgl_akhir' => $tanggalAkhir])->setPaper('a4', 'landscape');
         return $pdf->stream();
@@ -91,6 +103,7 @@ class ReportController extends Controller
 
     public function showSk(Request $request) {
         $data['unitkerja'] = UnitKerja::all();
+        $data['perihal'] = Perihal::all();
 
         return view('reportsk', $data);
     }
@@ -100,6 +113,7 @@ class ReportController extends Controller
         $tanggalAwal = $request->input('tanggal_awal');
         $tanggalAkhir = $request->input('tanggal_akhir');
         $unitKerjaId = $request->input('pengirim');
+        $perihal = $request->input('perihal');
 
         $query = SuratKeluar::query();
 
@@ -113,6 +127,10 @@ class ReportController extends Controller
             $query->where('pengirim', $unitKerjaId);
         }
 
+        if (!empty($perihal)) {
+            $query->where('id_perihal', $perihal);
+        }
+
         // Ambil data surat masuk sesuai filter
         $data['suratKeluar'] = $query->get();
 
@@ -120,6 +138,7 @@ class ReportController extends Controller
             'tanggal_awal' => $tanggalAwal,
             'tanggal_akhir' => $tanggalAkhir,
             'pengirim' => $unitKerjaId,
+            'perihal' => $perihal,
         ]);
 
         return view('reportsk_tabel', $data);
@@ -130,6 +149,7 @@ class ReportController extends Controller
         $tanggalAwal = $filterCriteria['tanggal_awal'];
         $tanggalAkhir = $filterCriteria['tanggal_akhir'];
         $unitKerjaId = $filterCriteria['pengirim'];
+        $perihal = $filterCriteria['perihal'];
 
         $query = SuratKeluar::query();
 
@@ -141,6 +161,10 @@ class ReportController extends Controller
         // Filter berdasarkan unit kerja
         if (!empty($unitKerjaId)) {
             $query->where('pengirim', $unitKerjaId);
+        }
+
+        if (!empty($perihal)) {
+            $query->where('id_perihal', $perihal);
         }
 
         $suratkeluar = $query->with('unitkerja')->get();
@@ -153,7 +177,7 @@ class ReportController extends Controller
             $jumlahsuratkeluar = $suratkeluar->count();
 
         }
-        
+
         $pdf = PDF::loadview('suratkeluar_pdf', ['suratkeluar' => $suratkeluar, 'unitkerjaNama' => $unitkerjaNama, 'jumlahsuratkeluar' => $jumlahsuratkeluar, 'tgl_awal' => $tanggalAwal, 'tgl_akhir' => $tanggalAkhir])->setPaper('a4', 'landscape');
         return $pdf->stream();
         $request->session()->forget('filter_criteria');
