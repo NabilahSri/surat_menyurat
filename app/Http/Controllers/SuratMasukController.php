@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendWa;
 use Illuminate\Http\Request;
 use App\Models\SuratMasuk;
 use App\Models\UnitKerja;
 use App\Models\Disposisi;
 use App\Models\Perihal;
-use Barryvdh\DomPDF\PDF as DomPDFPDF;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -149,6 +150,7 @@ class SuratMasukController extends Controller
     public function disposisi(Request $req){
         $tanggal = Carbon::now('Asia/Jakarta');
         $disposisi = Disposisi::where('id_surat_masuk', $req->id)->latest()->first();
+        $notelepon = User::where('id_unit_kerja', $req->id_unit_kerja)->get();
         if ($disposisi) {
             Disposisi::create([
                 'id_user'=>Auth::user()->id,
@@ -168,6 +170,14 @@ class SuratMasukController extends Controller
                 'tanggal' => $tanggal
             ]);
         }
+
+        $data = [
+            'notelepon' => $notelepon,
+            'file' => $req->file
+        ];
+
+        // echo $req->file;
+        SendWa::dispatch($data);
         return redirect('surat-masuk');
     }
 

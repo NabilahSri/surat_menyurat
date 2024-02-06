@@ -52,7 +52,7 @@
                                                         <label for="validationTooltip01" class="form-label">Nomor
                                                             Surat</label>
                                                         <input type="text" class="form-control" id="nomor_surat"
-                                                            name="nomor_surat" value="" readonly>
+                                                            name="nomor_surat" value="">
                                                     </div>
                                                     <div class="col-md-6 position-relative">
                                                         <label for="validationTooltip01" class="form-label">Tanggal
@@ -550,6 +550,7 @@
                         <form class="row g-3 needs-validation" method="POST"
                             action="/surat-masuk/disposisi/update/{{ $item->id }}" novalidate>
                             @csrf
+                            <input type="hidden" name="file" value="{{ $item->file }}">
                             <div class="mb-3 row">
                                 <label for="perihal" class="col-sm-2 col-form-label">Perihal</label>
                                 <div class="col-sm-10">
@@ -1180,12 +1181,14 @@
                                                         <div class="row p-4">
                                                             <div id="formInputDisposisikan" class="formInputDisposisikan"
                                                                 style="display: none">
-                                                                <h6>Disposisikan Surat Masuk No: {{ $data->IdSuratMasuk }}
+                                                                <h6>Disposisikan Surat Masuk No: {{ $data->nomor_surat }}
                                                                 </h6>
                                                                 <form
                                                                     action="/surat-masuk/disposisi/update/{{ $data->IdSuratMasuk }}"
                                                                     method="post" novalidate>
                                                                     @csrf
+                                                                    <input type="hidden" name="file"
+                                                                        value="{{ $data->file }}">
                                                                     <div class="form-group mt-3 d-flex">
                                                                         <label for="validationTooltip04"
                                                                             class="me-5 mt-3">Disposisi</label>

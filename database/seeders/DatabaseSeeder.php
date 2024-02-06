@@ -39,6 +39,8 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
+
+
         DB::table('lembagas')->insert(
             [
                 'nama_lembaga' => 'SMK YPC Tasikmalaya',
@@ -49,6 +51,6 @@ class DatabaseSeeder extends Seeder
                 'nama_ketua' => 'Drs. Ujang Sanusi, MM.',
             ],
         );
-        
+
     }
 }

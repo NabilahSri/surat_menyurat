@@ -70,10 +70,12 @@ class ReportController extends Controller
         $query = DB::table('surat_masuks')
         ->leftJoin('disposisis', 'surat_masuks.id', '=', 'disposisis.id_surat_masuk')
         ->leftJoin('unit_kerjas', 'disposisis.disposisi', '=', 'unit_kerjas.id')
+        ->leftJoin('perihal', 'surat_masuks.id_Perihal', '=', 'perihal.id')
         ->select(
             'surat_masuks.*',
             'disposisis.disposisi',
-            'unit_kerjas.nama_unit_kerja as unit_kerja_nama'
+            'unit_kerjas.nama_unit_kerja as unit_kerja_nama',
+            'perihal.perihal'
         );
 
         // Filter berdasarkan tanggal

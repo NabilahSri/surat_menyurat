@@ -82,7 +82,7 @@
                         <td>{{ $p->tanggal_surat }}</td>
                         <td class="text-center">{{ $p->sifat_surat }}</td>
                         <td>{{ $p->pengirim }}</td>
-                        <td>{{ $p->perihal->perihal }}</td>
+                        <td>{{ $p->perihal }}</td>
                         <td>{{ $p->unit_kerja_nama ?? '' }}</td>
                         <td>{{ $p->status == null ? '' : $p->status }}</td>
                         <td>{{ $p->lokasi_penyimpanan == null ? '' : $p->lokasi_penyimpanan }}</td>
